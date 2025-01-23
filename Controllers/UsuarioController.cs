@@ -1,3 +1,4 @@
+using System.Net.Mime;
 using GerenciadorUsuario.DTOs;
 using GerenciadorUsuario.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -5,7 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace GerenciadorUsuario.Controllers
 {
     [Route("/api/usuarios")]
-    [Produces("application/json")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [Consumes(MediaTypeNames.Application.Json)]
     [ApiController]
     public class UsuarioController : ControllerBase
     {
@@ -21,9 +23,10 @@ namespace GerenciadorUsuario.Controllers
 
         [HttpGet]
         [ProducesResponseType(statusCode: StatusCodes.Status200OK, Type = typeof(List<Usuario>))]
-        public IActionResult BuscarUsuarios() 
+        public IActionResult BuscarUsuarios([FromQuery] string filtroNome = "") 
         {
-            return Ok(_usuarios);
+            IEnumerable<Usuario> usuariosFiltrados = _usuarios.Where(u => u.Nome.StartsWith(filtroNome, StringComparison.OrdinalIgnoreCase));
+            return Ok(usuariosFiltrados);
         }
 
         [HttpGet("{id:guid}", Name = nameof(BuscarPorId))]
@@ -48,6 +51,36 @@ namespace GerenciadorUsuario.Controllers
             Usuario usuario = dto.ConverterParaModelo();
             _usuarios.Add(usuario);
             return CreatedAtAction(nameof(BuscarPorId), new { usuario.Id }, usuario);
+        }
+
+        [HttpPatch("{id:guid}")]
+        [ProducesResponseType(statusCode: StatusCodes.Status204NoContent)]
+        [ProducesResponseType(statusCode: StatusCodes.Status404NotFound)]
+        [ProducesResponseType(statusCode: StatusCodes.Status400BadRequest)]
+        public IActionResult AtualizarUsuario([FromRoute] Guid id, [FromBody] AtualizarUsuarioDTO dto)
+        {
+            Usuario usuario = _usuarios.FirstOrDefault(u => u.Id == id);
+            if (usuario is null)
+            {
+                return NotFound();
+            }
+            usuario.Nome = dto.Nome;
+            return NoContent();
+        }
+
+        [HttpDelete("{id:guid}")]
+        [ProducesResponseType(statusCode: StatusCodes.Status204NoContent)]
+        [ProducesResponseType(statusCode: StatusCodes.Status404NotFound)]
+        public IActionResult RemoverUsuario([FromRoute] Guid id)
+        {
+            Usuario usuario = _usuarios.FirstOrDefault(u => u.Id == id);
+            if (usuario is null)
+            {
+                return NotFound();
+            }
+
+            _usuarios.Remove(usuario);
+            return NoContent();
         }
     }
 }
