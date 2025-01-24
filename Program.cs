@@ -1,9 +1,13 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.OpenApi.Models;
+using GerenciadorUsuario.Filters;
+using GerenciadorUsuario.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+// Add services to the container.
+
+builder.Services.AddSingleton<IUsuarioRepository, UsuarioRepository>();
+
+builder.Services.AddControllers(options => options.Filters.Add<ExceptionFilter>());
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -22,5 +26,16 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+// Middleware de log de requisições
+app.Use((httpContext, next) => 
+{
+    var logger = httpContext.RequestServices.GetService<ILogger<Program>>();
+    logger.LogInformation(
+        "Requisição com o método {Metodo} para rota {Rota}", 
+        httpContext.Request.Method, 
+        httpContext.Request.Path);
+    
+    return next();
+});
 
+app.Run();

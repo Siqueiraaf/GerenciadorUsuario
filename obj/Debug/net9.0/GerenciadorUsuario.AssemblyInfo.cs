@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GerenciadorUsuario")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+827de90dee6fc155e29e425bed47431ba3e9b9d2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+35b3d2949514d3c4750e77dc1617d68eb13aed87")]
 [assembly: System.Reflection.AssemblyProductAttribute("GerenciadorUsuario")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GerenciadorUsuario")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
