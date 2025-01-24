@@ -2,6 +2,7 @@ using System.Net.Mime;
 using GerenciadorUsuario.DTOs;
 using GerenciadorUsuario.Models;
 using GerenciadorUsuario.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GerenciadorUsuario.Controllers
@@ -10,6 +11,7 @@ namespace GerenciadorUsuario.Controllers
     [Produces(MediaTypeNames.Application.Json)]
     [Consumes(MediaTypeNames.Application.Json)]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class UsuarioController : ControllerBase
     {
         private readonly IUsuarioRepository _usuarioRepository;
@@ -22,12 +24,11 @@ namespace GerenciadorUsuario.Controllers
         [ProducesResponseType(statusCode: StatusCodes.Status200OK, Type = typeof(List<Usuario>))]
         public IActionResult BuscarUsuarios([FromQuery] string filtroNome = "") 
         {
-            throw new Exception("Erro não Tratado");
-
             IEnumerable<Usuario> usuariosFiltrados = _usuarioRepository.ObterUsuarios().Where(u => u.Nome.StartsWith(filtroNome, StringComparison.OrdinalIgnoreCase));
             return Ok(usuariosFiltrados);
         }
 
+        [Authorize("buscar-por-id")]
         [HttpGet("{id:guid}", Name = nameof(BuscarPorId))]
         [ProducesResponseType(statusCode: StatusCodes.Status200OK, Type = typeof(Usuario))]
         [ProducesResponseType(statusCode: StatusCodes.Status404NotFound)]
