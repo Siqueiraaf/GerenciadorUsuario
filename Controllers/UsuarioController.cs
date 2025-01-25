@@ -1,4 +1,5 @@
 using System.Net.Mime;
+using Asp.Versioning;
 using GerenciadorUsuario.DTOs;
 using GerenciadorUsuario.Models;
 using GerenciadorUsuario.Repository;
@@ -7,7 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GerenciadorUsuario.Controllers
 {
-    [Route("/api/usuarios")]
+    [ApiVersion("1.0")]
+    [Route("/api/v{version:apiVersion}/usuarios")]
     [Produces(MediaTypeNames.Application.Json)]
     [Consumes(MediaTypeNames.Application.Json)]
     [ApiController]
@@ -26,6 +28,18 @@ namespace GerenciadorUsuario.Controllers
         {
             IEnumerable<Usuario> usuariosFiltrados = _usuarioRepository.ObterUsuarios().Where(u => u.Nome.StartsWith(filtroNome, StringComparison.OrdinalIgnoreCase));
             return Ok(usuariosFiltrados);
+        }
+
+        [HttpGet]
+        [ApiVersion("2.0")]
+        [ProducesResponseType(statusCode: StatusCodes.Status200OK, Type = typeof(List<Usuario>))]
+        public IActionResult BuscarUsuariosV2([FromQuery] string filtroNome = "") 
+        {
+            IEnumerable<Usuario> usuariosFiltrados = _usuarioRepository.ObterUsuarios().Where(u => u.Nome.StartsWith(filtroNome, StringComparison.OrdinalIgnoreCase));
+            return Ok(new
+            {
+                Itens = usuariosFiltrados
+            });
         }
 
         [Authorize("buscar-por-id")]

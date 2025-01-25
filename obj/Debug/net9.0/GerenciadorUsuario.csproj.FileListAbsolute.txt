@@ -43,3 +43,9 @@ D:\Projetos\GerenciadorUsuario\bin\Debug\net9.0\System.IdentityModel.Tokens.Jwt.
 D:\Projetos\GerenciadorUsuario\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 D:\Projetos\GerenciadorUsuario\bin\Debug\net9.0\Microsoft.IdentityModel.Protocols.dll
 D:\Projetos\GerenciadorUsuario\bin\Debug\net9.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\Projetos\GerenciadorUsuario\bin\Debug\net9.0\GerenciadorUsuario.xml
+D:\Projetos\GerenciadorUsuario\obj\Debug\net9.0\GerenciadorUsuario.xml
+D:\Projetos\GerenciadorUsuario\bin\Debug\net9.0\Asp.Versioning.Abstractions.dll
+D:\Projetos\GerenciadorUsuario\bin\Debug\net9.0\Asp.Versioning.Http.dll
+D:\Projetos\GerenciadorUsuario\bin\Debug\net9.0\Asp.Versioning.Mvc.dll
+D:\Projetos\GerenciadorUsuario\bin\Debug\net9.0\Asp.Versioning.Mvc.ApiExplorer.dll

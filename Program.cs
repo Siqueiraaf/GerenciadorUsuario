@@ -1,4 +1,6 @@
+using System.Reflection;
 using System.Text;
+using Asp.Versioning;
 using GerenciadorUsuario.Filters;
 using GerenciadorUsuario.Repository;
 using Microsoft.IdentityModel.Tokens;
@@ -27,7 +29,40 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddSingleton<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddControllers(options => options.Filters.Add<ExceptionFilter>());
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen( options => 
+{
+    var documentacao = new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Contact = new Microsoft.OpenApi.Models.OpenApiContact
+        {
+            Email = "usuarioadmin@gmail.com",
+            Name = "Equipe APi",
+            Url = new Uri("https://github.com/Siqueiraaf/GerenciadorUsuario")
+        },
+        Description = "API para gerenciamento de usuários",
+        Title = "Gerenciador de Usuários",
+    };
+
+    options.SwaggerDoc("v1", documentacao);
+    options.SwaggerDoc("v2", documentacao);
+
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+
+    options.IncludeXmlComments(xmlPath);
+});
+builder.Services.AddApiVersioning(options => 
+{
+    options.ApiVersionReader = new UrlSegmentApiVersionReader();
+    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ReportApiVersions = true;
+
+}).AddApiExplorer(options => 
+{
+    options.GroupNameFormat = "'v'V";
+    options.SubstituteApiVersionInUrl = true;
+});
 
 var app = builder.Build();
 
@@ -35,7 +70,13 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options => 
+    {
+        foreach (var apiVersion in app.DescribeApiVersions())
+        {
+            options.SwaggerEndpoint($"/swagger/{apiVersion.GroupName}/swagger.json", apiVersion.GroupName);
+        }
+    });
 }
 
 /*var configuration = builder.Configuration;

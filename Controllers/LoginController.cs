@@ -11,12 +11,18 @@ namespace GerenciadorUsuario.Controllers
     public class LoginController : ControllerBase
     {
         private readonly string Secret;
+
         public LoginController(IConfiguration configuration)
         {
             Secret = configuration.GetValue<string>("ChaveAutenticacao");
         }
 
-        [HttpGet]
+        /// <summary>
+        /// Endpoint Responsável por gerar o token do usuário no modelo JWT
+        /// </summary>
+        /// <returns></returns>
+
+        [HttpPost]
         public ActionResult GerarToken()
         {
             // Definição da nossa chave de acesso

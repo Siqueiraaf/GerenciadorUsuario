@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>GerenciadorUsuario</name>
+    </assembly>
+    <members>
+        <member name="M:GerenciadorUsuario.Controllers.LoginController.GerarToken">
+            <summary>
+            Endpoint Responsável por gerar o token do usuário no modelo JWT
+            </summary>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
