@@ -5,6 +5,7 @@ using GerenciadorUsuario.Models;
 using GerenciadorUsuario.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace GerenciadorUsuario.Controllers
 {
@@ -17,9 +18,12 @@ namespace GerenciadorUsuario.Controllers
     public class UsuarioController : ControllerBase
     {
         private readonly IUsuarioRepository _usuarioRepository;
-        public UsuarioController(IUsuarioRepository usuarioRepository)
+        private readonly IMemoryCache _cache;
+        
+        public UsuarioController(IUsuarioRepository usuarioRepository, IMemoryCache cache)
         {
             _usuarioRepository = usuarioRepository;
+            _cache = cache;
         }
 
         [HttpGet]
@@ -33,12 +37,18 @@ namespace GerenciadorUsuario.Controllers
         [HttpGet]
         [ApiVersion("2.0")]
         [ProducesResponseType(statusCode: StatusCodes.Status200OK, Type = typeof(List<Usuario>))]
-        public IActionResult BuscarUsuariosV2([FromQuery] string filtroNome = "") 
+        public async Task<IActionResult> BuscarUsuariosV2([FromQuery] string filtroNome = "") 
         {
-            IEnumerable<Usuario> usuariosFiltrados = _usuarioRepository.ObterUsuarios().Where(u => u.Nome.StartsWith(filtroNome, StringComparison.OrdinalIgnoreCase));
+            var usuariosViaCache = await _cache.GetOrCreateAsync(filtroNome, async operacao =>
+            {
+                IEnumerable<Usuario> usuariosFiltrados = (await _usuarioRepository.ObterUsuariosAsync())
+                .Where(u => u.Nome.StartsWith(filtroNome, StringComparison.OrdinalIgnoreCase));
+                return usuariosFiltrados;
+            }); 
+
             return Ok(new
             {
-                Itens = usuariosFiltrados
+                Itens = usuariosViaCache
             });
         }
 

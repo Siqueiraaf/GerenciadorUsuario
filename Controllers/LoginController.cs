@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 
 namespace GerenciadorUsuario.Controllers
@@ -23,6 +24,7 @@ namespace GerenciadorUsuario.Controllers
         /// <returns></returns>
 
         [HttpPost]
+        [EnableRateLimiting("janela-fixa")]
         public ActionResult GerarToken()
         {
             // Definição da nossa chave de acesso

@@ -22,5 +22,12 @@ namespace GerenciadorUsuario.Repository
         {
             return _usuarios;
         }
+
+        // Simulando uma chamada assíncrona
+        public async Task<List<Usuario>> ObterUsuariosAsync()
+        {
+            await Task.Delay(4_000);
+            return _usuarios;
+        }
     }
 }

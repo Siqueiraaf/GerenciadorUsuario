@@ -3,11 +3,22 @@ using System.Text;
 using Asp.Versioning;
 using GerenciadorUsuario.Filters;
 using GerenciadorUsuario.Repository;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
-
-
+builder.Services.AddMemoryCache();
+builder.Services.AddRateLimiter(_ =>
+{
+    _.AddFixedWindowLimiter("janela-fixa", options =>
+    {
+        options.QueueLimit = 5;
+        options.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
+        options.PermitLimit = 2;
+        options.Window = TimeSpan.FromSeconds(5);
+    });
+    
+});   
 builder.Services.AddAuthentication().AddJwtBearer(options => 
 {
     options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
@@ -82,6 +93,7 @@ if (app.Environment.IsDevelopment())
 /*var configuration = builder.Configuration;
 var connectionString = configuration["ConnectionStrings:ChaveAutenticacao"];
 var apiKey = configuration["ChaveAutenticacao"];*/
+app.UseRateLimiter();
 
 app.UseHttpsRedirection();
 
